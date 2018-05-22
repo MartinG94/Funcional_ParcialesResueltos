@@ -1,0 +1,1 @@
+# Funcional_ParcialesResueltos
