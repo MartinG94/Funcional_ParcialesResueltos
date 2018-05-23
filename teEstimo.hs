@@ -18,14 +18,15 @@ sentimientos (Comprador _ sentimientos) = sentimientos
 
 estrategia (Vendedor _ estrategia _) = estrategia
 
-nuevoNombre otroNombre (Vendedor nombre estrategia [sentimiento]) = Vendedor otroNombre estrategia [sentimiento]
-nuevoNombre otroNombre (Comprador nombre [sentimiento]) = Comprador otroNombre [sentimiento]
+nuevoNombre otroNombre (Vendedor nombre estrategia sentimientos) = Vendedor otroNombre estrategia sentimientos
+nuevoNombre otroNombre (Comprador nombre sentimientos) = Comprador otroNombre sentimientos
 
-nuevoSentimiento otroSentimiento (Vendedor nombre estrategia lista) = Vendedor nombre estrategia (otroSentimiento : lista)
-nuevoSentimiento otroSentimiento (Comprador nombre lista) = Comprador nombre (otroSentimiento : lista)
+nuevoSentimiento otroSentimiento (Vendedor nombre estrategia sentimientos) = Vendedor nombre estrategia (otroSentimiento : sentimientos)
+nuevoSentimiento otroSentimiento (Comprador nombre sentimientos) = Comprador nombre (otroSentimiento : sentimientos)
 
-nuevaEstrategia otraEstrategia (Vendedor nombre estrategia [sentimiento]) = Vendedor nombre otraEstrategia [sentimiento]
+nuevaEstrategia otraEstrategia (Vendedor nombre estrategia sentimientos) = Vendedor nombre otraEstrategia sentimientos
 --
+
 jorgito = Comprador "Jorge" ["molestia"]
 tincho = Comprador "Martín" ["indiferencia", "molestia"]
 agus = Comprador "Agustín" ["felicidad"]
@@ -46,14 +47,14 @@ niFuNiFa = id
 
 -- Punto 1b)
 gauchada :: Estrategia
-gauchada persona = nuevoSentimiento "satisfacción" persona
+gauchada persona = sentir "satisfacción" persona
 
 -- Punto 1c)
 estafa :: Estrategia
-estafa persona = (nuevoSentimiento "bronca" . nuevoSentimiento "felicidad") persona
+estafa persona = (sentir "bronca" . sentir "felicidad") persona
 
 fraudeOlímpico :: Estrategia
-fraudeOlímpico persona = (nuevoSentimiento "ira asesina" . estafa) persona
+fraudeOlímpico persona = (sentir "ira asesina" . estafa) persona
 
 -- Punto 1d)
 type Cantidad = Int
@@ -61,12 +62,12 @@ type Cantidad = Int
 seguidilla :: Cantidad -> Estrategia
 seguidilla cantidad persona = foldr sentir persona (replicate cantidad  "molestia")
 
+-- Punto 2a)
 sentimientosMalos = ["molestia", "bronca", "ira asesina"]
 
 esMalo unSentimiento = elem unSentimiento sentimientosMalos
 tieneMalosSentimientos lista = any esMalo lista
 
--- Punto 2a)
 seSienteBien :: Persona -> Bool
 seSienteBien persona = (not . tieneMalosSentimientos) (sentimientos persona)
 
@@ -80,11 +81,11 @@ elementosÚnicos (x:xs)
    | (not . elem x) xs = x : elementosÚnicos xs
    | otherwise = elementosÚnicos xs
 
+-- Punto 2c)
 cantidadDeSentimientosDiferentes = length . elementosÚnicos . sentimientos
 másDeNSentimientosDiferentes cantidad = (== cantidad) . cantidadDeSentimientosDiferentes
 contiene sentimiento = elem sentimiento . sentimientos
 
--- Punto 2c)
 quiereMatarATodos :: Persona -> Bool
 quiereMatarATodos persona = seSienteMal persona && másDeNSentimientosDiferentes 3 persona && contiene "ira asesina" persona
 
@@ -99,15 +100,18 @@ juicio :: Cantidad -> Estrategia
 juicio cantidadDeAbogados = sentir "depresión" . seguidilla cantidadDeAbogados
 
 -- Punto 3)
+cantidadAbogadosQueContrata = length . sentimientos
+
 reaccionar :: Persona -> Persona -> Estrategia
 reaccionar unComprador unVendedor
-    | (quiereMatarATodos . estrategia unVendedor) unComprador = juicio ((length . sentimientos) unComprador)
+    | (quiereMatarATodos . estrategia unVendedor) unComprador = juicio (cantidadAbogadosQueContrata unComprador)
     | (seSienteBien . estrategia unVendedor) unComprador = agradecimiento
     | otherwise = defensaAlConsumidor
 
 -- Punto 4)
 primerSentimientoLuegoDeLaVenta :: Sentimiento -> Persona -> Persona -> Bool
-primerSentimientoLuegoDeLaVenta sentimiento unComprador unVendedor = ((== sentimiento) . head . sentimientos . reaccionar unComprador unVendedor) unVendedor
+primerSentimientoLuegoDeLaVenta sentimiento unComprador unVendedor =
+  ((== sentimiento) . head . sentimientos . reaccionar unComprador unVendedor) unVendedor
 
 -- Punto 4a)
 sientePlacerLuegoDeLaVenta :: Persona -> Persona -> Bool
@@ -121,8 +125,8 @@ sienteDepresiónLuegoDeLaVenta = primerSentimientoLuegoDeLaVenta "depresión"
 sienteTristezaLuegoDeLaVenta :: Persona -> Persona -> Bool
 sienteTristezaLuegoDeLaVenta = primerSentimientoLuegoDeLaVenta "tristeza"
 
+-- Punto 4d)
 aplicarReacción comprador vendedor = reaccionar comprador vendedor vendedor
 
--- Punto 4d)
 ventaÉlite :: Persona -> [Persona] -> [Persona]
 ventaÉlite comprador listaVendedores = (map (aplicarReacción comprador) . filter (sientePlacerLuegoDeLaVenta comprador)) listaVendedores
