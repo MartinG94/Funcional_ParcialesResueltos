@@ -34,18 +34,18 @@ analía = Socio Femenino 34 70 []
 x1 = Tratamiento 5000 30 "zamorreaDistópica"
 xfg23 = Tratamiento 10000 2 "zamorreaDistópica"
 
+-- Punto 2)
 nuevaEnfermedad unaEnfermedad socio = socio {preexistencia = unaEnfermedad}
 agregarPreexistencia otraEnfermedad socio = nuevaEnfermedad (otraEnfermedad : preexistencia socio) socio
 
--- Punto 2)
 diagnosticarPreexistencia :: Enfermedad -> Socio -> Socio
 diagnosticarPreexistencia = agregarPreexistencia
 
+-- Punto 3)
 esObeso = (> 150) . peso
 tieneEdadAvanzada = (> 75) . edad
 tieneMuchasPreexistencias = (> 8) . length . preexistencia
 
--- Punto 3)
 estáEnRiesgo :: Socio -> Bool
 estáEnRiesgo socio = esObeso socio || tieneEdadAvanzada socio || tieneMuchasPreexistencias socio
 
@@ -71,10 +71,10 @@ prestaciónTotal unaEnfermedad solicitud
   | ((== unaEnfermedad) . enfermedadDeLaSolicitud) solicitud = costoDeSolicitud solicitud
   | otherwise = 0
 
+  -- Punto 5b)
 laEnfermedadEsPreexistente unaEnfermedad = elem unaEnfermedad . preexistencia
 laEnfermedadNoEsPreexistente unaEnfermedad = not . laEnfermedadEsPreexistente unaEnfermedad
 
--- Punto 5b)
 prestaciónSinPreexistencias :: Enfermedad -> Prestación
 prestaciónSinPreexistencias unaEnfermedad solicitud
   | laEnfermedadNoEsPreexistente (enfermedadDeLaSolicitud solicitud) (socio solicitud) = ((*0.5) . costoDeSolicitud) solicitud897
