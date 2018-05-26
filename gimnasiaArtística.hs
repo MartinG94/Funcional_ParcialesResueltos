@@ -125,3 +125,7 @@ cantidadDeHabilidadesLuegoDe unaHabilidad = length . habilidades . ejercitar 10 
 
 quienTieneMasEjerciciosDespuésDe :: Habilidad -> [Gimnasta] -> Gimnasta
 quienTieneMasEjerciciosDespuésDe unaHabilidad = máximoSegún (cantidadDeHabilidadesLuegoDe unaHabilidad)
+
+-- Punto 5)
+h :: Eq b => b -> (a -> b) -> [a] -> Bool
+h e g = any((\x->x).(==e)).map g
