@@ -78,7 +78,8 @@ complot país = nuevosEnemigosSegún potenciar país
 
 -- Punto 3)
 atacarAEnemigos país = nuevosEnemigosSegún (estrategia país) país
-contrataqueDeEnemigos país = (foldr (estrategia) país . enemigos) país
+componerTodo = foldl (flip (.)) id
+contrataqueDeEnemigos país = (componerTodo . map estrategia . enemigos país) país
 
 resultado :: País -> País
 resultado = contrataqueDeEnemigos . atacarAEnemigos
