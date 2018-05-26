@@ -114,7 +114,7 @@ quienTieneMásFuerza = máximoSegún fuerza
 
 -- Punto 4.b)
 aguante :: Gimnasta -> Nivel
-aguante gimnasta = flexibilidad gimnasta + fortaleza gimnasta
+aguante gimnasta = min (flexibilidad gimnasta)  (fortaleza gimnasta)
 
 quienTieneMenosAguante :: [Gimnasta] -> Gimnasta
 quienTieneMenosAguante = mínimoSegún aguante
